@@ -5,6 +5,7 @@ from boa.interop.System.ExecutionEngine import GetExecutingScriptHash, GetCallin
 
 # Contract constants
 from actions.Constants import OWNER
+from actions.TXio import get_asset_attachments, get_asset_attachments_for_prev, get_inputs, validate_inputs
 
 # Exchange actions
 from actions.Exchange import initialize, get_state, get_balance, get_maker_fee, get_taker_fee, get_exchange_rate
@@ -25,13 +26,36 @@ def main(operation, args):
 
     if trigger == Verification():
         '''
-        Check if state of contract == {Active,Pending,Frozen}
         Validate inputs
         Check that valid self send
+        Validate is withdrawing nep5
         Validate utxo has been reserved
         Validate withdraw destination
         Validate amount withdrawn
         '''
+        if get_state() != 'Active':
+            return False
+
+        tx_data = get_asset_attachments()
+        prev_tx_data = get_asset_attachments_for_prev()
+
+        # THIS WILL NEED TO BE CALLING A FUNCTION LATER
+        withdrawal_stage = 'Mark'
+
+        if withdrawal_stage == 'Mark':
+            if not CheckWitness(tx_data.sender_addr):
+                return False
+            '''
+            if not verify_withdrawal(tx_data):
+                return False
+                    // Validate inputs as well
+                    foreach (var i in inputs)
+                    {
+                        if (Storage.Get(Context(), i.PrevHash.Concat(IndexAsByteArray(i.PrevIndex))).Length > 0) return false;
+                    }
+            '''
+        inputs = get_inputs()
+        outputs = get_outputs()
         if CheckWitness(OWNER):
             return True
         return False
