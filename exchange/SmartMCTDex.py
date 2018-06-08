@@ -4,18 +4,18 @@ from boa.interop.Neo.TriggerType import Application, Verification
 from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
 
 # Contract constants
-from actions.Constants import OWNER
-from actions.Exchange import freeze_trading, unfreeze_trading, terminate_trading, add_to_whitelist, \
+from .exchange.Constants import OWNER
+from .exchange.Exchange import freeze_trading, unfreeze_trading, terminate_trading, add_to_whitelist, \
     remove_from_whitelist
 # Exchange actions
-from actions.Exchange import initialize, get_state, get_balance, get_maker_fee, get_taker_fee, get_exchange_rate
-from actions.TXio import get_asset_attachments, get_asset_attachments_for_prev, get_inputs
+from .exchange.Exchange import initialize, get_state, get_balance, get_maker_fee, get_taker_fee, get_exchange_rate
+from .exchange.TXio import get_asset_attachments, get_asset_attachments_for_prev, get_inputs
 # Transaction actions
-from actions.Transactions import transfer_asset_to, verify_sent_amount, process_withdrawal
+from .exchange.Transactions import transfer_asset_to, verify_sent_amount, process_withdrawal
 # Storage Manager
-from common.MCTManager import transfer
+from .exchange.MCTManager import transfer
 # Offer actions
-from common.Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer
+from .exchange.Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer
 
 
 def main(operation, args):
