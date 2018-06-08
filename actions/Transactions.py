@@ -1,35 +1,30 @@
 # Neo operations
-from boa.interop.Neo.Runtime import Notify
-from boa.interop.System.ExecutionEngine import GetExecutingScriptHash, GetCallingScriptHash, GetScriptContainer
 from boa.builtins import concat
+from boa.interop.Neo.Runtime import Notify
 
 # Storage manager
-from common.MCTManager import MCTManager
+from common.MCTManager import get, put, delete
 
 
 def transfer_asset_to(address, asset_id, amount):
-
-    storage = MCTManager()
 
     if amount < 1:
         Notify("Amount to transfer less than 1!")
         return
 
     key = concat(address, asset_id)
-    current_balance = storage.get(key)
-    storage.put(key, current_balance + amount)
+    current_balance = get(key)
+    put(key, current_balance + amount)
 
 
 def reduce_balance(address, asset_id, amount):
-
-    storage = MCTManager()
 
     if amount < 1:
         Notify("Amount to reduce less than 1")
         return False
 
     key = concat(address, asset_id)
-    current_balance = storage.get(key)
+    current_balance = get(key)
     new_balance = current_balance - amount
 
     if new_balance < 0:
@@ -37,9 +32,9 @@ def reduce_balance(address, asset_id, amount):
         return False
 
     if new_balance > 0:
-        storage.put(key, new_balance)
+        put(key, new_balance)
     else:
-        storage.delete(key)
+        delete(key)
 
     return True
 

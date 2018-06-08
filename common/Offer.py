@@ -7,23 +7,19 @@ from boa.interop.Neo.Blockchain import GetHeight
 from boa.interop.Neo.Action import RegisterAction
 from MCTDex.common.Txio import Attachments, get_asset_attachments
 '''
+from boa.builtins import list
 # Neo operations
 from boa.interop.Neo.Runtime import CheckWitness, GetTime
-from boa.builtins import list
 
+from actions.Constants import NeoAssetID, GasAssetID, OWNER, bucket_duration, system_asset
+# Contract constants
+from actions.Constants import fee_factor, native_token, native_token_discount
 # Exchange actions
 from actions.Exchange import get_state, get_maker_fee, get_taker_fee, get_volume, add_volume
-
-# Contract contstants
-from actions.Constants import fee_factor, native_token, native_token_discount
-from actions.Constants import NeoAssetID, GasAssetID, OWNER, bucket_duration, system_asset
-
 # Notification actions ------ Might not be needed later
 from actions.Notifications import created, failed, transferred, filled, cancelled
-
 # Transaction actions
 from actions.Transactions import transfer_asset_to, reduce_balance
-
 # Storage manager
 from common.MCTManager import get, put, delete, deserialize, serialize_array
 
@@ -79,7 +75,7 @@ def new_offer(maker_address, offer_asset_id, offer_amount, want_asset_id, want_a
     return offer
 
 
-def get_offers(trading_pair):
+def get_offers(trading_pair) -> list:
     '''
     Get List of Offers for trading pair
     :param trading_pair: scripthash of each contract trading pair

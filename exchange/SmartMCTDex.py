@@ -1,24 +1,21 @@
 # NEO operations
 from boa.interop.Neo.Runtime import GetTrigger, CheckWitness
 from boa.interop.Neo.TriggerType import Application, Verification
-from boa.interop.System.ExecutionEngine import GetExecutingScriptHash, GetCallingScriptHash, GetScriptContainer
+from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
 
 # Contract constants
 from actions.Constants import OWNER
-from actions.TXio import get_asset_attachments, get_asset_attachments_for_prev, get_inputs, validate_inputs
-
+from actions.Exchange import freeze_trading, unfreeze_trading, terminate_trading, add_to_whitelist, \
+    remove_from_whitelist
 # Exchange actions
 from actions.Exchange import initialize, get_state, get_balance, get_maker_fee, get_taker_fee, get_exchange_rate
-from actions.Exchange import freeze_trading, unfreeze_trading, terminate_trading, add_to_whitelist, remove_from_whitelist
-
-# Offer actions
-from common.Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer
-
-# Storage Manager
-from common.MCTManager import transfer
-
+from actions.TXio import get_asset_attachments, get_asset_attachments_for_prev, get_inputs
 # Transaction actions
 from actions.Transactions import transfer_asset_to, verify_sent_amount, process_withdrawal
+# Storage Manager
+from common.MCTManager import transfer
+# Offer actions
+from common.Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer
 
 
 def main(operation, args):
@@ -103,7 +100,7 @@ def main(operation, args):
                 return False
             if len(args) != 3:
                 return False
-            if not verify_sent_amount(args[0],args[1],args[2]):
+            if not verify_sent_amount(args[0], args[1], args[2]):
                 return False
             if not transfer_asset_to(args[0], args[1], args[2]):
                 return False
@@ -176,4 +173,3 @@ def main(operation, args):
             return transfer(my_hash, t_amount)
 
     return False
-
