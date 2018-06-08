@@ -25,7 +25,7 @@ from actions.Notifications import created, failed, transferred, filled, cancelle
 from actions.Transactions import transfer_asset_to, reduce_balance
 
 # Storage manager
-from common.MCTManager import MCTManager
+from common.MCTManager import get, put, delete, deserialize, serialize_array
 
 
 def create_offer():
@@ -85,15 +85,13 @@ def get_offers(trading_pair):
     :param trading_pair: scripthash of each contract trading pair
     :return: list of Offers()
     '''
-    storage = MCTManager()
-
-    result_serialized = storage.get(trading_pair)
+    result_serialized = get(trading_pair)
 
     if not result_serialized:
         print("result_serialized is null")
         return False
 
-    result_info = storage.deserialize(result_serialized)
+    result_info = deserialize(result_serialized)
 
     offers = []
     for result in result_info:
@@ -119,13 +117,12 @@ def get_offer(trading_pair, hash):
     :param hash:
     :return: Offer Object
     '''
-    storage = MCTManager()
-    offer_data = storage.get(trading_pair + hash)
+    offer_data = get(trading_pair + hash)
 
     if len(offer_data) == 0:
         return create_offer()
     else:
-        return storage.deserialize(offer_data)
+        return deserialize(offer_data)
 
 
 def store_offer(trading_pair, offer_hash, offer):
@@ -136,13 +133,11 @@ def store_offer(trading_pair, offer_hash, offer):
     :param offer:
     :return: Out put of Storage Call
     '''
-    storage = MCTManager()
-
     if offer["AvailableAmount"] == 0:
         remove_offer(trading_pair, offer_hash)
     else:
-        offer_data = storage.serialize_array(offer)
-        storage.put(trading_pair + offer_hash, offer_data)
+        offer_data = serialize_array(offer)
+        put(trading_pair + offer_hash, offer_data)
 
 
 def remove_offer(trading_pair, offer_hash):
@@ -152,9 +147,7 @@ def remove_offer(trading_pair, offer_hash):
     :param offer_hash:
     :return: Out put of Storage Call
     '''
-    storage = MCTManager()
-
-    storage.delete(trading_pair + offer_hash)
+    delete(trading_pair + offer_hash)
 
 
 def make_offer(offer) -> bool:
@@ -182,8 +175,7 @@ def make_offer(offer) -> bool:
         return False
     trading_pair = offer["OfferAssetID"] + offer["WantAssetID"]
     offer_hash = hash(offer)
-    storage = MCTManager()
-    if storage.get(trading_pair + offer_hash):
+    if get(trading_pair + offer_hash):
         return False
 
     if not offer["OfferAmount"] > 0 and offer["WantAmount"] > 0:
@@ -217,7 +209,6 @@ def fill_offer(filler_address, trading_pair, offer_hash, amount_to_fill, use_nat
         return False
 
     offer = get_offer(trading_pair, offer_hash)
-    storage = MCTManager()
 
     if offer["MakerAddress"] == '':
         failed(filler_address, offer_hash)
@@ -246,7 +237,7 @@ def fill_offer(filler_address, trading_pair, offer_hash, amount_to_fill, use_nat
         failed(filler_address, offer_hash)
         return True
 
-    fee_address = storage.get('feeAddress')
+    fee_address = get('feeAddress')
     maker_fee_rate = get_maker_fee(offer["WantAssetID"])
     taker_fee_rate = get_taker_fee(offer["OfferAssetID"])
     maker_fee = (amount_to_fill * maker_fee_rate) / fee_factor
@@ -299,7 +290,7 @@ def fill_offer(filler_address, trading_pair, offer_hash, amount_to_fill, use_nat
         add_volume(offer["OfferAssetID"], amount_to_fill, amount_to_take)
 
     # Update available amount
-    offer.AvailableAmount = offer["AvailableAmount"] - amount_to_take
+    offer["AvailableAmount"] = offer["AvailableAmount"] - amount_to_take
 
     store_offer(trading_pair, offer_hash, offer)
 
