@@ -15,7 +15,7 @@ from actions.Exchange import freeze_trading, unfreeze_trading, terminate_trading
 from common.Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer
 
 # Storage Manager
-from common.MCTManager import MCTManager
+from common.MCTManager import transfer
 
 # Transaction actions
 from actions.Transactions import transfer_asset_to, verify_sent_amount, process_withdrawal
@@ -173,8 +173,7 @@ def main(operation, args):
             t_amount = args[0]
             my_hash = GetExecutingScriptHash()
 
-            storage = MCTManager()
-            return storage.transfer(my_hash, t_amount)
+            return transfer(my_hash, t_amount)
 
     return False
 
