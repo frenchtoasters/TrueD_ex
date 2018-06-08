@@ -49,6 +49,12 @@ def verify_sent_amount(address, asset_id, amount):
 
 
 def process_withdrawal():
+    '''
+
+    :return:
+    '''
+
+    '''
     my_container = GetScriptContainer()
     my_hash = GetExecutingScriptHash()
     withdrawl_stage = WithdrawStage(my_container)
@@ -79,4 +85,5 @@ def process_withdrawal():
     #       value += outputs[output]['Value']
 
     withdrawing(withdrawingaddr, assetID, amount)
+    '''
     return True
