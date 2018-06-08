@@ -3,7 +3,7 @@ from boa.builtins import concat
 from boa.interop.Neo.Runtime import GetTime
 
 # Contract constants
-from actions.Constants import bucket_duration, max_fee
+from common.Constants import bucket_duration, max_fee
 # Storage Manager
 from common.MCTManager import put, get, deserialize, serialize_array
 # Offer actions

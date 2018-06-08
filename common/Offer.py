@@ -11,17 +11,17 @@ from boa.builtins import list
 # Neo operations
 from boa.interop.Neo.Runtime import CheckWitness, GetTime
 
-from actions.Constants import NeoAssetID, GasAssetID, OWNER, bucket_duration, system_asset
+from .exchange.Constants import NeoAssetID, GasAssetID, OWNER, bucket_duration, system_asset
 # Contract constants
-from actions.Constants import fee_factor, native_token, native_token_discount
+from .exchange.Constants import fee_factor, native_token, native_token_discount
 # Exchange actions
-from actions.Exchange import get_state, get_maker_fee, get_taker_fee, get_volume, add_volume
+from .exchange.Exchange import get_state, get_maker_fee, get_taker_fee, get_volume, add_volume
 # Notification actions ------ Might not be needed later
-from actions.Notifications import created, failed, transferred, filled, cancelled
+from .exchange.Notifications import created, failed, transferred, filled, cancelled
 # Transaction actions
-from actions.Transactions import transfer_asset_to, reduce_balance
+from .exchange.Transactions import transfer_asset_to, reduce_balance
 # Storage manager
-from common.MCTManager import get, put, delete, deserialize, serialize_array
+from .exchange.MCTManager import get, put, delete, deserialize, serialize_array
 
 
 def create_offer():
