@@ -6,10 +6,10 @@ from boa.builtins import concat
 from actions.Constants import bucket_duration, max_fee
 
 # Storage Manager
-from common.MCTManager import put, get, delete, transfer, deserialize, serialize_array
+from common.MCTManager import put, get, deserialize, serialize_array
 
 # Offer actions
-from common.Offer import Volume
+from common.Offer import set_volume
 
 
 # Owner functions
@@ -112,7 +112,7 @@ def get_volume(bucket_number, asset_id):
     volume_data = get(volume_key)
 
     if len(volume_data) == 0:
-        return Volume()
+        return set_volume()
     else:
         return deserialize(volume_data)
 
@@ -128,14 +128,13 @@ def add_volume(asset_id, native_amount, foreign_amount):
     volume_data = get(volume_key)
 
     if len(volume_data) == 0:
-        volume = Volume()
+        volume = set_volume()
 
-        volume.Native = native_amount
-        volume.Foreign = foreign_amount
+        volume["Native"] = native_amount
+        volume["Foreign"] = foreign_amount
     else:
         volume = deserialize(volume_data)
-        volume.Native = volume.Native + native_amount
-        volume.Foreign = volume.Foreign + foreign_amount
+        volume["Native"] = volume["Native"] + native_amount
+        volume["Foreign"] = volume["Foreign"] + foreign_amount
 
     put(volume_key, serialize_array(volume))
-
