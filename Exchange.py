@@ -66,7 +66,6 @@ def initialize():
     put('state', 'Active')
 
 
-# Utility functions
 def get_state():
     return get('state')
 

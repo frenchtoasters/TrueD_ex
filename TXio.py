@@ -103,9 +103,6 @@ def get_asset_attachments_for_prev():
     return attachment
 
 
-def get_inputs(tx):
-    return True
-
-
 def validate_inputs(tx):
     return True
+

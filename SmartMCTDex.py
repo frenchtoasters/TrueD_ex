@@ -9,12 +9,13 @@ from Exchange import initialize, get_state, get_balance, get_maker_fee, get_take
 from MCTManager import transfer
 # Offer actions
 from Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer
-from TXio import get_asset_attachments, get_asset_attachments_for_prev, get_inputs
+from TXio import get_asset_attachments, get_asset_attachments_for_prev
 # Transaction actions
 from Transactions import transfer_asset_to, verify_sent_amount, process_withdrawal
 from boa.interop.Neo.Runtime import GetTrigger, CheckWitness
 from boa.interop.Neo.TriggerType import Application, Verification
-from boa.interop.System.ExecutionEngine import GetExecutingScriptHash
+from boa.interop.System.ExecutionEngine import GetExecutingScriptHash, GetScriptContainer
+from boa.interop.Neo.Transaction import GetInputs, GetOutputs
 
 
 def main(operation, args):
@@ -50,8 +51,10 @@ def main(operation, args):
                         if (Storage.Get(Context(), i.PrevHash.Concat(IndexAsByteArray(i.PrevIndex))).Length > 0) return false;
                     }
             '''
-        inputs = get_inputs()
-        outputs = get_outputs()
+        tx = GetScriptContainer()
+        inputs = GetInputs(tx)
+        outputs = GetOutputs(tx)
+
         if CheckWitness(OWNER):
             return True
         return False
