@@ -5,7 +5,7 @@ from boa.interop.Neo.Output import GetValue, GetAssetId, GetScriptHash
 from boa.interop.Neo.Input import GetInputHash, GetIndex
 
 
-def attachments():
+def create_attachment():
     """
     Container object ( struct ) for passing around information about attached neo and gas
     """
@@ -29,7 +29,7 @@ def get_asset_attachments():
     :return:
         Attachments: An object with information about attached neo and gas
     """
-    attachment = attachments()
+    attachment = create_attachment()
 
     tx = GetScriptContainer()  # type:Transaction
     references = tx.References
@@ -70,14 +70,14 @@ def get_asset_attachments():
 
 
 def get_asset_attachments_for_prev():
-    attachment = attachments()
+    attachment = create_attachment()
 
     tx = GetScriptContainer()  # type:Transaction
 
     sent_amount_neo = 0
     sent_amount_gas = 0
 
-    attachment.receiver_addr = GetExecutingScriptHash()
+    attachment["receiver_addr"] = GetExecutingScriptHash()
 
     for ins in tx.Inputs:
 
@@ -87,7 +87,7 @@ def get_asset_attachments_for_prev():
         if len(references) > 0:
 
             reference = references[0]
-            sender_addr = reference.ScriptHash
+            attachment["sender_addr"] = reference.ScriptHash
 
             prev_output = prev_tx.Outputs[ins.Index]
 
