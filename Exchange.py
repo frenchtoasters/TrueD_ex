@@ -1,3 +1,13 @@
+'''
+Name: Exchange.py
+Author: Tyler French
+Description: Class which can handle the different operations of the Exchange.
+Example:
+    from Exchange import freeze_trading, ...
+
+
+'''
+
 # Neo operations
 from boa.builtins import concat
 

@@ -1,3 +1,17 @@
+'''
+Name: MCTManager.py
+Author: Tyler French
+Description: Class used for all MCT storage operations, as well as additional storage operations.
+Example:
+    from MCTManager import get, put, delete, transfer, deserialize, serialize_array
+
+    get(key)
+    put(key, value)
+    delete(key)
+    transfer(tx_hash, amount)
+    serialize_array(array)
+'''
+
 # Neo operations
 from boa.interop.Neo.App import RegisterAppCall
 from boa.interop.Neo.Runtime import Serialize, Deserialize
@@ -44,11 +58,3 @@ def serialize_array(items):
     '''
     return Serialize(items)
 
-
-def serialize_length_item(item):
-    '''
-    This function serialize's a single offer to be put in storage
-    :param item:
-    :return: data: hash of offer
-    '''
-    return Serialize(item)

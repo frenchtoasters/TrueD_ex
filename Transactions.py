@@ -1,3 +1,16 @@
+'''
+Name: Transaction.py
+Author: Tyler French
+Description: Class which handles all transactions with the smart contract.
+Example:
+    from Transactions import transfer_asset_to, reduce_balance, verify_sent_amount, process_withdrawal
+
+    send_asset == transfer_asset_to
+    update_contract_balance == reduce_balance
+    verify_amount_to_be_sent == verify_sent_amount
+    withdrawal_from_contract == process_withdrawal
+'''
+
 # Neo operations
 from boa.builtins import concat
 from boa.interop.Neo.Runtime import Notify

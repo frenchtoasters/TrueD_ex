@@ -1,4 +1,25 @@
 '''
+Name: Offer.py
+Author: Tyler French
+Description: Class which handles the creation, filling, cancelling, and removal of Offers. As well as gathering the
+volume and current exchange rate of the native token.
+
+Example:
+    from Offer import get_volume, add_volume, get_exchange_rate, new_offer, get_offers, get_offer, store_offer, \
+    remove_offer, make_offer, fill_offer
+
+    native_volume == get_volume
+    change_native_volume == add_volume
+    exchange_rate == get_exchange_rate
+    create_new_offer == new_offer
+    get_trading_pair_offers == get_offers
+    get_single_offer == get_offer
+    post_offer == make_offer
+    cancel_offer == remove_offer
+    complete_offer == fill_offer
+'''
+
+'''
 Might need these later
 
 

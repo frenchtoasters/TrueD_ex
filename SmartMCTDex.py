@@ -1,15 +1,26 @@
-# NEO operations
-# Contract constants
-from Constants import OWNER
+'''
+Name: SmartMCTDex.py
+Author: Tyler French
+Description: Brokerage contract that allows for look up of order book, create buy/sell offers, fill and complete trades.
+Example:
+
+    import contract SmartMCTDex.avm 0710 05 False False
+
+    wallet tkn_send TOKEN {from address} {dApp contract address}
+'''
+
+# Exchange operations
 from Exchange import freeze_trading, unfreeze_trading, terminate_trading, add_to_whitelist, \
     remove_from_whitelist, initialize, get_balance, get_maker_fee, get_taker_fee
-# Storage Manager
+
+# Contract Functions
+from Constants import OWNER
 from MCTManager import transfer, get
-# Offer actions
 from Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer, get_exchange_rate
 from TXio import get_asset_attachments, get_asset_attachments_for_prev
-# Transaction actions
 from Transactions import transfer_asset_to, verify_sent_amount, process_withdrawal
+
+# neo-boa imports
 from boa.interop.Neo.Runtime import GetTrigger, CheckWitness
 from boa.interop.Neo.TriggerType import Application, Verification
 from boa.interop.System.ExecutionEngine import GetExecutingScriptHash, GetScriptContainer

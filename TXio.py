@@ -1,8 +1,21 @@
+'''
+Name: TXio.py
+Author: Tyler French
+Description: Object that has the needed information about a given transaction between the contract.
+Example:
+    from TXio import get_asset_attachments
+
+    tx_attachment = get_asset_attachments()
+
+    prev_tx_attachment = get_asset_attachments_for_prev()
+
+    if not validate_inputs:
+        return False
+'''
+
 from boa.interop.System.ExecutionEngine import GetExecutingScriptHash, GetScriptContainer
-from boa.interop.Neo.Transaction import Transaction, GetReferences, GetInputs, GetOutputs, GetUnspentCoins
+from boa.interop.Neo.Transaction import Transaction
 from boa.interop.Neo.Blockchain import GetTransaction
-from boa.interop.Neo.Output import GetValue, GetAssetId, GetScriptHash
-from boa.interop.Neo.Input import GetInputHash, GetIndex
 
 
 def create_attachment():
