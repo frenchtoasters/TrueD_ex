@@ -1,5 +1,4 @@
 # Neo operations
-from boa.builtins import concat, list, range, substr
 from boa.interop.Neo.App import RegisterAppCall
 from boa.interop.Neo.Runtime import Serialize, Deserialize
 
@@ -46,7 +45,7 @@ def serialize_array(items):
     return Serialize(items)
 
 
-def serialize_length_item(item: list):
+def serialize_length_item(item):
     '''
     This function serialize's a single offer to be put in storage
     :param item:

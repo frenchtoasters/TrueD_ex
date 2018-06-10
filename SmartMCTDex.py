@@ -2,13 +2,11 @@
 # Contract constants
 from Constants import OWNER
 from Exchange import freeze_trading, unfreeze_trading, terminate_trading, add_to_whitelist, \
-    remove_from_whitelist
-# Exchange actions
-from Exchange import initialize, get_state, get_balance, get_maker_fee, get_taker_fee, get_exchange_rate
+    remove_from_whitelist, initialize, get_balance, get_maker_fee, get_taker_fee
 # Storage Manager
-from MCTManager import transfer
+from MCTManager import transfer, get
 # Offer actions
-from Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer
+from Offer import get_offers, new_offer, make_offer, fill_offer, cancel_offer, get_exchange_rate
 from TXio import get_asset_attachments, get_asset_attachments_for_prev
 # Transaction actions
 from Transactions import transfer_asset_to, verify_sent_amount, process_withdrawal
@@ -30,7 +28,7 @@ def main(operation, args):
         Validate withdraw destination
         Validate amount withdrawn
         '''
-        if get_state() != 'Active':
+        if get("state") != 'Active':
             return False
 
         tx_data = get_asset_attachments()
@@ -40,7 +38,7 @@ def main(operation, args):
         withdrawal_stage = 'Mark'
 
         if withdrawal_stage == 'Mark':
-            if not CheckWitness(tx_data.sender_addr):
+            if not CheckWitness(tx_data["sender_addr"]):
                 return False
             '''
             if not verify_withdrawal(tx_data):
@@ -72,7 +70,7 @@ def main(operation, args):
 
         # Get functions
         if operation == 'getstate':
-            return get_state()
+            return get("state")
 
         # ARGS: asset_id
         if operation == 'getMakerFee':
@@ -98,7 +96,7 @@ def main(operation, args):
 
         # ARGS: address, asset_id, amount
         if operation == 'deposit':
-            if get_state() != 'Active':
+            if get("state") != 'Active':
                 return False
             if len(args) != 3:
                 return False
@@ -110,7 +108,7 @@ def main(operation, args):
 
         # ARGS: maker_address, offer_asset_id, offer_amount, want_asset_id, want_amount, avail_amount, nonce
         if operation == 'makeOffer':
-            if get_state() != 'Active':
+            if get("state") != 'Active':
                 return False
             if len(args) != 7:
                 return False
@@ -120,7 +118,7 @@ def main(operation, args):
 
         # ARGS: filler_address, trading_pair, offer_hash, amount_to_fill, use_native_token)
         if operation == 'fillOffer':
-            if get_state() != 'Active':
+            if get("state") != 'Active':
                 return False
             if len(args) != 5:
                 return False
@@ -129,7 +127,7 @@ def main(operation, args):
 
         # ARGS: trading_pair, offer_hash
         if operation == 'cancelOffer':
-            if get_state() != 'Active':
+            if get("state") != 'Active':
                 return False
 
             if len(args) != 2:

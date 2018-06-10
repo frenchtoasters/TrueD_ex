@@ -7,21 +7,21 @@ from boa.interop.Neo.Blockchain import GetHeight
 from boa.interop.Neo.Action import RegisterAction
 from MCTDex.common.Txio import Attachments, get_asset_attachments
 '''
-from boa.builtins import list
+from boa.builtins import concat
 # Neo operations
 from boa.interop.Neo.Runtime import CheckWitness, GetTime
 
 from Constants import NeoAssetID, GasAssetID, OWNER, bucket_duration, system_asset
-# Transaction actions
-from Transactions import transfer_asset_to, reduce_balance
 # Contract constants
 from Constants import fee_factor, native_token, native_token_discount
 # Exchange actions
-from Exchange import get_state, get_maker_fee, get_taker_fee, get_volume, add_volume
+from Exchange import get_maker_fee, get_taker_fee
 # Storage manager
 from MCTManager import get, put, delete, deserialize, serialize_array
 # Notification actions ------ Might not be needed later
 from Notifications import created, failed, transferred, filled, cancelled
+# Transaction actions
+from Transactions import transfer_asset_to, reduce_balance
 
 
 def create_offer():
@@ -51,6 +51,48 @@ def set_volume():
     return volume
 
 
+def get_volume(bucket_number, asset_id):
+    volume_key = concat("tradeVolume", bucket_number)
+    volume_key = concat(volume_key, asset_id)
+    volume_data = get(volume_key)
+
+    if len(volume_data) == 0:
+        return set_volume()
+    else:
+        return deserialize(volume_data)
+
+
+def add_volume(asset_id, native_amount, foreign_amount):
+    time = GetTime()
+
+    bucket_number = time / bucket_duration
+
+    volume_key = concat("tradeVolume", bucket_number)
+    volume_key = concat(volume_key, asset_id)
+
+    volume_data = get(volume_key)
+
+    if len(volume_data) == 0:
+        volume = set_volume()
+
+        volume["Native"] = native_amount
+        volume["Foreign"] = foreign_amount
+    else:
+        volume = deserialize(volume_data)
+        volume["Native"] = volume["Native"] + native_amount
+        volume["Foreign"] = volume["Foreign"] + foreign_amount
+
+    put(volume_key, serialize_array(volume))
+
+
+def get_exchange_rate(asset_id):
+    time = GetTime()
+
+    bucket_number = time / bucket_duration
+
+    return get_volume(bucket_number, asset_id)
+
+
 def new_offer(maker_address, offer_asset_id, offer_amount, want_asset_id, want_amount, avail_amount, nonce):
     offer_asset_category = "NEP5"
     want_asset_category = "NEP5"
@@ -75,7 +117,7 @@ def new_offer(maker_address, offer_asset_id, offer_amount, want_asset_id, want_a
     return offer
 
 
-def get_offers(trading_pair) -> list:
+def get_offers(trading_pair):
     '''
     Get List of Offers for trading pair
     :param trading_pair: scripthash of each contract trading pair
@@ -146,20 +188,20 @@ def remove_offer(trading_pair, offer_hash):
     delete(trading_pair + offer_hash)
 
 
-def make_offer(offer) -> bool:
+def make_offer(offer):
     '''
     Make New Offer on books
     :param offer:
     :return: Result of if offer was valid
     '''
-    if not CheckWitness(offer.MakerAddress):
+    if not CheckWitness(offer["MakerAddress"]):
         return False
 
     # Checking that the person that invoked this was the smart contract it self
     if not CheckWitness(OWNER):
         return False
 
-    allowed = get_state()
+    allowed = get("state")
     if allowed == 'Inactive' or allowed == 'Pending':
         return False
 
@@ -170,7 +212,7 @@ def make_offer(offer) -> bool:
     ):
         return False
     trading_pair = offer["OfferAssetID"] + offer["WantAssetID"]
-    offer_hash = hash(offer)
+    offer_hash = serialize_array(offer)
     if get(trading_pair + offer_hash):
         return False
 
@@ -210,7 +252,7 @@ def fill_offer(filler_address, trading_pair, offer_hash, amount_to_fill, use_nat
         failed(filler_address, offer_hash)
         return False
 
-    allowed = get_state()
+    allowed = get("state")
     if allowed == 'Inactive' or allowed == 'Pending':
         return False
 
@@ -298,7 +340,7 @@ def fill_offer(filler_address, trading_pair, offer_hash, amount_to_fill, use_nat
 def cancel_offer(trading_pair, offer_hash):
     offer = get_offer(trading_pair, offer_hash)
 
-    if offer.MakerAddress == '':
+    if offer["MakerAddress"] == '':
         return False
 
     if not CheckWitness(offer["MakerAddress"]):
